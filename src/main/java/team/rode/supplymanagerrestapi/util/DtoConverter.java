@@ -1,13 +1,21 @@
 package team.rode.supplymanagerrestapi.util;
 
 import jakarta.annotation.PostConstruct;
+import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import team.rode.supplymanagerrestapi.DTO.response.DeliveryItemResponseDto;
 import team.rode.supplymanagerrestapi.DTO.response.DeliveryResponseDto;
+import team.rode.supplymanagerrestapi.DTO.response.SupplierProductPriceResponseDto;
 import team.rode.supplymanagerrestapi.models.Delivery;
+import team.rode.supplymanagerrestapi.models.DeliveryItem;
+import team.rode.supplymanagerrestapi.models.SupplierProductPrice;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class DtoConverter {
@@ -21,10 +29,27 @@ public class DtoConverter {
     @PostConstruct
     public void init() {
         configureDeliveryMapping();
+        configureSupplierProductPrice();
     }
 
     // Delivery -> DeliveryResponseDto
     private void configureDeliveryMapping() {
+        Converter<List<DeliveryItem>, List<DeliveryItemResponseDto>> deliveryItemConverter = ctx -> {
+            List<DeliveryItem> items = ctx.getSource();
+            if (items == null) {
+                return new ArrayList<>();
+            }
+            return items.stream().map(item -> {
+                DeliveryItemResponseDto dto = new DeliveryItemResponseDto();
+                dto.setId(item.getId());
+                dto.setPrice(item.getPrice());
+                dto.setQuantity(item.getQuantity());
+                dto.setProductId(item.getProduct().getId());
+                dto.setProductName(item.getProduct().getName());
+                return dto;
+            }).collect(Collectors.toList());
+        };
+
         modelMapper.addMappings(new PropertyMap<Delivery, DeliveryResponseDto>() {
             @Override
             protected void configure() {
@@ -32,16 +57,26 @@ public class DtoConverter {
                 map().setDate(source.getDate());
                 map().setSupplierId(source.getSupplier().getId());
                 map().setSupplierName(source.getSupplier().getName());
-                map().setDeliveryItemList(source.getDeliveryItemList().stream().map(item -> {
-                    DeliveryItemResponseDto deliveryItemResponseDto = new DeliveryItemResponseDto();
-                    deliveryItemResponseDto.setId(item.getId());
-                    deliveryItemResponseDto.setPrice(item.getPrice());
-                    deliveryItemResponseDto.setQuantity(item.getQuantity());
-                    deliveryItemResponseDto.setProductId(item.getProduct().getId());
-
-                    return deliveryItemResponseDto;
-                }).toList());
+                using(deliveryItemConverter)
+                        .map(source.getDeliveryItemList())
+                        .setDeliveryItemList(null);
                 map().setTotalCost(source.getTotalCost());
+            }
+        });
+    }
+
+    private void configureSupplierProductPrice() {
+        modelMapper.addMappings(new PropertyMap<SupplierProductPrice, SupplierProductPriceResponseDto>() {
+            @Override
+            protected void configure() {
+                map().setId(source.getId());
+                map().setPrice(source.getPrice());
+                map().setProductId(source.getProduct().getId());
+                map().setProductName(source.getProduct().getName());
+                map().setSupplierId(source.getSupplier().getId());
+                map().setSupplierName(source.getSupplier().getName());
+                map().setStartDate(source.getStartDate());
+                map().setEndDate(source.getEndDate());
             }
         });
     }

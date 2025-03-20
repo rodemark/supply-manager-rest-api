@@ -9,7 +9,7 @@ import team.rode.supplymanagerrestapi.services.SupplierProductPriceService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/supplier-product-prices")
+@RequestMapping("/api/v1/supplier-product-prices")
 public class SupplierProductPriceController {
 
     private final SupplierProductPriceService supplierProductPriceService;

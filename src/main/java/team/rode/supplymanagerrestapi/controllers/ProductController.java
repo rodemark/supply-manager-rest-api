@@ -9,7 +9,7 @@ import team.rode.supplymanagerrestapi.services.ProductService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("/api/v1/products")
 public class ProductController {
 
     private final ProductService productService;

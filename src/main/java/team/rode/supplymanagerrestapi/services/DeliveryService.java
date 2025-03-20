@@ -48,8 +48,6 @@ public class DeliveryService {
 
         setDeliveryRequestDtoParamToDelivery(delivery, deliveryRequestDto);
 
-
-
         delivery = deliveryRepository.save(delivery);
         log.info("Delivery with id {} added ", delivery.getId());
 
@@ -74,13 +72,12 @@ public class DeliveryService {
     }
 
     private void setDeliveryRequestDtoParamToDelivery(Delivery delivery, DeliveryRequestDto deliveryRequestDto) {
-
         Long supplierId = deliveryRequestDto.getSupplierId();
         LocalDate date = deliveryRequestDto.getDate();
         delivery.setSupplier(entityRetrievalService.getSupplierById(supplierId));
         delivery.setDate(date);
 
-        List<DeliveryItem> deliveryItemList = new ArrayList<>();
+        List<DeliveryItem> newItems = new ArrayList<>();
         for (DeliveryItemRequestDto deliveryItemRequestDto : deliveryRequestDto.getDeliveryItemList()) {
             Long productId = deliveryItemRequestDto.getProductId();
             SupplierProductPrice supplierProductPrice = entityRetrievalService.getSupplierProductPrice(supplierId, productId, date);
@@ -90,11 +87,17 @@ public class DeliveryService {
             deliveryItem.setPrice(supplierProductPrice.getPrice());
             deliveryItem.setProduct(entityRetrievalService.getProductById(productId));
             deliveryItem.setQuantity(deliveryItemRequestDto.getQuantity());
-
-            deliveryItem = deliveryItemRepository.save(deliveryItem);
-            deliveryItemList.add(deliveryItem);
+            newItems.add(deliveryItem);
         }
 
-        delivery.setDeliveryItemList(deliveryItemList);
+        // Вместо того чтобы присваивать новый список,
+        // очищаем существующую коллекцию и добавляем в неё новые элементы
+        if (delivery.getDeliveryItemList() == null) {
+            delivery.setDeliveryItemList(new ArrayList<>());
+        } else {
+            delivery.getDeliveryItemList().clear();
+        }
+        delivery.getDeliveryItemList().addAll(newItems);
     }
+
 }

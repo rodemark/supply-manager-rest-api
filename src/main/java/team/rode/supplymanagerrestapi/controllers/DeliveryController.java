@@ -9,7 +9,7 @@ import team.rode.supplymanagerrestapi.services.DeliveryService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/deliveries")
+@RequestMapping("/api/v1/deliveries")
 public class DeliveryController {
 
     private final DeliveryService deliveryService;
