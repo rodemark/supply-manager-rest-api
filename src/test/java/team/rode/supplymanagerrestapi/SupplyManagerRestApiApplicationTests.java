@@ -1,10 +1,10 @@
-package team.rode.severstalintershiprestapi;
+package team.rode.supplymanagerrestapi;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SeverstalIntershipRestApiApplicationTests {
+class SupplyManagerRestApiApplicationTests {
 
     @Test
     void contextLoads() {
