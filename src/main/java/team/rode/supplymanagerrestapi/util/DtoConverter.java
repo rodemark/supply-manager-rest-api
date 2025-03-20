@@ -5,8 +5,9 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import team.rode.supplymanagerrestapi.DTO.response.SupplierResponseDto;
-import team.rode.supplymanagerrestapi.models.Supplier;
+import team.rode.supplymanagerrestapi.DTO.response.DeliveryItemResponseDto;
+import team.rode.supplymanagerrestapi.DTO.response.DeliveryResponseDto;
+import team.rode.supplymanagerrestapi.models.Delivery;
 
 @Component
 public class DtoConverter {
@@ -19,15 +20,28 @@ public class DtoConverter {
 
     @PostConstruct
     public void init() {
-        configureSupplierRequestDtoMapping();
+        configureDeliveryMapping();
     }
 
-    // Supplier -> SupplierResponseDto
-    private void configureSupplierRequestDtoMapping() {
-        modelMapper.addMappings(new PropertyMap<Supplier, SupplierResponseDto>() {
+    // Delivery -> DeliveryResponseDto
+    private void configureDeliveryMapping() {
+        modelMapper.addMappings(new PropertyMap<Delivery, DeliveryResponseDto>() {
             @Override
             protected void configure() {
                 map().setId(source.getId());
+                map().setDate(source.getDate());
+                map().setSupplierId(source.getSupplier().getId());
+                map().setSupplierName(source.getSupplier().getName());
+                map().setDeliveryItemList(source.getDeliveryItemList().stream().map(item -> {
+                    DeliveryItemResponseDto deliveryItemResponseDto = new DeliveryItemResponseDto();
+                    deliveryItemResponseDto.setId(item.getId());
+                    deliveryItemResponseDto.setPrice(item.getPrice());
+                    deliveryItemResponseDto.setQuantity(item.getQuantity());
+                    deliveryItemResponseDto.setProductId(item.getProduct().getId());
+
+                    return deliveryItemResponseDto;
+                }).toList());
+                map().setTotalCost(source.getTotalCost());
             }
         });
     }
