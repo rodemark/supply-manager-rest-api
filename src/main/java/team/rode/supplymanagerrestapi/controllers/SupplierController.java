@@ -1,6 +1,7 @@
 package team.rode.supplymanagerrestapi.controllers;
 
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import team.rode.supplymanagerrestapi.DTO.request.SupplierRequestDto;
@@ -26,7 +27,7 @@ public class SupplierController {
     }
 
     @PostMapping()
-    public SupplierResponseDto addSupplier(@RequestBody SupplierRequestDto supplierRequestDto) {
+    public SupplierResponseDto addSupplier(@Valid  @RequestBody SupplierRequestDto supplierRequestDto) {
         return supplierService.addSupplier(supplierRequestDto);
     }
 
@@ -36,7 +37,7 @@ public class SupplierController {
     }
 
     @PatchMapping("/{supplierId}")
-    public SupplierResponseDto editSupplier(@RequestBody SupplierRequestDto supplierRequestDto,
+    public SupplierResponseDto editSupplier(@Valid @RequestBody SupplierRequestDto supplierRequestDto,
                                             @PathVariable Long supplierId) {
         return supplierService.editSupplier(supplierRequestDto, supplierId);
     }

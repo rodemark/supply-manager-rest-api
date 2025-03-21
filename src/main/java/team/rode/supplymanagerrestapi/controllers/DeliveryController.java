@@ -1,5 +1,6 @@
 package team.rode.supplymanagerrestapi.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import team.rode.supplymanagerrestapi.DTO.request.DeliveryRequestDto;
@@ -25,12 +26,12 @@ public class DeliveryController {
     }
 
     @PostMapping
-    public DeliveryResponseDto addDelivery(@RequestBody DeliveryRequestDto deliveryRequestDto) {
+    public DeliveryResponseDto addDelivery(@Valid @RequestBody DeliveryRequestDto deliveryRequestDto) {
         return deliveryService.addDelivery(deliveryRequestDto);
     }
 
     @PutMapping("/{id}")
-    public DeliveryResponseDto editDelivery(@RequestBody DeliveryRequestDto deliveryRequestDto,
+    public DeliveryResponseDto editDelivery(@Valid @RequestBody DeliveryRequestDto deliveryRequestDto,
                                             @PathVariable Long id) {
         return deliveryService.editDelivery(deliveryRequestDto, id);
     }

@@ -1,5 +1,6 @@
 package team.rode.supplymanagerrestapi.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import team.rode.supplymanagerrestapi.DTO.request.ProductRequestDto;
@@ -25,12 +26,12 @@ public class ProductController {
     }
 
     @PostMapping
-    public ProductResponseDto addProduct(@RequestBody ProductRequestDto productRequestDto) {
+    public ProductResponseDto addProduct(@Valid  @RequestBody ProductRequestDto productRequestDto) {
         return productService.addProduct(productRequestDto);
     }
 
     @PutMapping("/{id}")
-    public ProductResponseDto editProduct(@RequestBody ProductRequestDto productRequestDto, @PathVariable Long id) {
+    public ProductResponseDto editProduct(@Valid @RequestBody ProductRequestDto productRequestDto, @PathVariable Long id) {
         return productService.editProduct(productRequestDto, id);
     }
 

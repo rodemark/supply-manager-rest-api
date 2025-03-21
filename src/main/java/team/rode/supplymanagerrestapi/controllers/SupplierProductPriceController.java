@@ -1,5 +1,6 @@
 package team.rode.supplymanagerrestapi.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import team.rode.supplymanagerrestapi.DTO.request.SupplierProductPriceRequestDto;
@@ -25,12 +26,12 @@ public class SupplierProductPriceController {
     }
 
     @PostMapping
-    public SupplierProductPriceResponseDto addSupplierProductPrice(@RequestBody SupplierProductPriceRequestDto dto) {
+    public SupplierProductPriceResponseDto addSupplierProductPrice(@Valid @RequestBody SupplierProductPriceRequestDto dto) {
         return supplierProductPriceService.addSupplierProductPrice(dto);
     }
 
     @PutMapping("/{id}")
-    public SupplierProductPriceResponseDto editSupplierProductPrice(@RequestBody SupplierProductPriceRequestDto dto,
+    public SupplierProductPriceResponseDto editSupplierProductPrice(@Valid @RequestBody SupplierProductPriceRequestDto dto,
                                                                     @PathVariable Long id) {
         return supplierProductPriceService.editSupplierProductPrice(dto, id);
     }
