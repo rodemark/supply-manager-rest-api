@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import team.rode.supplymanagerrestapi.DTO.request.ProductRequestDto;
 import team.rode.supplymanagerrestapi.DTO.response.ProductResponseDto;
+import team.rode.supplymanagerrestapi.exceptionHandling.exceptions.DuplicateResourceException;
 import team.rode.supplymanagerrestapi.models.Product;
 import team.rode.supplymanagerrestapi.repositories.ProductRepository;
 import team.rode.supplymanagerrestapi.util.DtoConverter;
@@ -35,7 +36,16 @@ public class ProductService {
 
     @Transactional
     public ProductResponseDto addProduct(ProductRequestDto productRequestDto) {
+        if (productRepository.existsSimilarProduct(productRequestDto.getName(), productRequestDto.getDescription(),
+                productRequestDto.getUnitOfMeasurement())) {
+            log.error("A Product with such data already exists");
+            throw new DuplicateResourceException("A Product with such data already exists");
+        }
+
         Product product = productRepository.save(dtoConverter.convertToEntity(productRequestDto, Product.class));
+
+        log.info("Product with id {} added ", product.getId());
+
         return dtoConverter.convertToDto(product, ProductResponseDto.class);
     }
 
@@ -43,6 +53,7 @@ public class ProductService {
     public void deleteProduct(Long productId) {
         Product product = entityRetrievalService.getProductById(productId);
         productRepository.delete(product);
+        log.info("Product with id {} deleted ", productId);
     }
 
     @Transactional

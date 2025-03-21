@@ -23,7 +23,13 @@ public interface SupplierProductPriceRepository extends JpaRepository<SupplierPr
             @Param("date") LocalDate date
     );
 
-    @Query
+    @Query("SELECT CASE WHEN COUNT(sp) > 0 THEN true ELSE false END " +
+            "FROM SupplierProductPrice sp " +
+            "WHERE sp.supplier.id = :supplierId " +
+            "AND sp.product.id = :productId " +
+            "AND sp.startDate = :startDate " +
+            "AND sp.endDate = :endDate " +
+            "AND sp.price = :price")
     boolean existsSimilarSupplierProductPrice(
             @Param("supplierId") Long supplierId,
             @Param("productId") Long productId,

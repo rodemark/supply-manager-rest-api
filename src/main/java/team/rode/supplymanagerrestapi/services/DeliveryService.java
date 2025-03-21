@@ -10,7 +10,6 @@ import team.rode.supplymanagerrestapi.DTO.response.DeliveryResponseDto;
 import team.rode.supplymanagerrestapi.models.Delivery;
 import team.rode.supplymanagerrestapi.models.DeliveryItem;
 import team.rode.supplymanagerrestapi.models.SupplierProductPrice;
-import team.rode.supplymanagerrestapi.repositories.DeliveryItemRepository;
 import team.rode.supplymanagerrestapi.repositories.DeliveryRepository;
 import team.rode.supplymanagerrestapi.util.DtoConverter;
 
@@ -24,15 +23,13 @@ public class DeliveryService {
     private final DeliveryRepository deliveryRepository;
     private final DtoConverter dtoConverter;
     private final EntityRetrievalService entityRetrievalService;
-    private final DeliveryItemRepository deliveryItemRepository;
 
     @Autowired
     public DeliveryService(DeliveryRepository deliveryRepository, DtoConverter dtoConverter,
-                           EntityRetrievalService entityRetrievalService, DeliveryItemRepository deliveryItemRepository) {
+                           EntityRetrievalService entityRetrievalService) {
         this.deliveryRepository = deliveryRepository;
         this.dtoConverter = dtoConverter;
         this.entityRetrievalService = entityRetrievalService;
-        this.deliveryItemRepository = deliveryItemRepository;
     }
 
     public List<DeliveryResponseDto> getDeliveries() {
@@ -49,6 +46,7 @@ public class DeliveryService {
         setDeliveryRequestDtoParamToDelivery(delivery, deliveryRequestDto);
 
         delivery = deliveryRepository.save(delivery);
+
         log.info("Delivery with id {} added ", delivery.getId());
 
         return dtoConverter.convertToDto(delivery, DeliveryResponseDto.class);
@@ -90,8 +88,6 @@ public class DeliveryService {
             newItems.add(deliveryItem);
         }
 
-        // Вместо того чтобы присваивать новый список,
-        // очищаем существующую коллекцию и добавляем в неё новые элементы
         if (delivery.getDeliveryItemList() == null) {
             delivery.setDeliveryItemList(new ArrayList<>());
         } else {
