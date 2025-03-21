@@ -6,27 +6,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import team.rode.supplymanagerrestapi.models.SupplierProductPrice;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface SupplierProductPriceRepository extends JpaRepository<SupplierProductPrice, Long> {
-
-    // найти все цены, которые пересекаются с заданным периодом
-    @Query("SELECT p FROM SupplierProductPrice p " +
-            "WHERE p.supplier.id = :supplierId " +
-            "AND p.product.id = :productId " +
-            "AND p.startDate <= :endDate " +
-            "AND p.endDate >= :startDate")
-    List<SupplierProductPrice> findOverlappingPrices(
-            @Param("supplierId") Long supplierId,
-            @Param("productId") Long productId,
-            @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate
-    );
-
-    // Найти актуальную цену на определённую дату (date)
     @Query("SELECT p FROM SupplierProductPrice p " +
             "WHERE p.supplier.id = :supplierId " +
             "AND p.product.id = :productId " +
@@ -36,5 +21,14 @@ public interface SupplierProductPriceRepository extends JpaRepository<SupplierPr
             @Param("supplierId") Long supplierId,
             @Param("productId") Long productId,
             @Param("date") LocalDate date
+    );
+
+    @Query
+    boolean existsSimilarSupplierProductPrice(
+            @Param("supplierId") Long supplierId,
+            @Param("productId") Long productId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("price") BigDecimal price
     );
 }
