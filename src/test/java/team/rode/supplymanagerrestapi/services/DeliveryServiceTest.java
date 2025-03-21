@@ -58,7 +58,6 @@ class DeliveryServiceTest {
 
     @Test
     void testAddDelivery_Success() {
-        Delivery delivery = new Delivery();
         Supplier supplier = new Supplier();
         supplier.setId(1L);
         supplier.setName("Supplier 1");

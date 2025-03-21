@@ -26,9 +26,6 @@ class SupplierServiceTest {
     @Mock
     private DtoConverter dtoConverter;
 
-    @Mock
-    private EntityRetrievalService entityRetrievalService;
-
     @InjectMocks
     private SupplierService supplierService;
 
