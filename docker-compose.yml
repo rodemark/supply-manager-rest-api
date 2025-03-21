@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: supply-manager-rest-api
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - supply-manager-network
+
+  postgres:
+    image: postgres:16.4
+    environment:
+      POSTGRES_DB: ${DB_NAME:-supply_manager_db}
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    container_name: supply-manager-postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./src/main/resources/database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - supply-manager-network
+
+volumes:
+  db_data:
+
+networks:
+  supply-manager-network:
+    external: true
